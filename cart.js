@@ -13,19 +13,29 @@ function calculateTotal(cartItems) {
 }
 
 function applyDiscount(total, discountRate) {
-  return total - total * discountRate; // Bug: Missing validation for discountRate
+  
+  //validation of the discount rate- must be less than 0 like 0.1,0.2
+
+  if (typeof discountRate !== "number" || discountRate <0 || discountRate > 1){
+    throw new Error(" Invalid Discounted Rate.");
+  }
+  return total - total * discountRate; // 
 }
 
 function generateReceipt(cartItems, total) {
+
+ if (isNaN(total)) total = 0;
+
   let receipt = "Items:\n";
   cartItems.forEach(item => {
-      receipt += `${item.name}: ${item.price}\n`;
+      receipt += `${item.name}: $${item.price.toFixed(2)}\n`;
   });
-  receipt += `Total: ${total.toFixed(2)}`; // Bug: total may not be a number
+  receipt += `Total: $${total.toFixed(2)}`; // Fixed the Bug: total may not be a number
   return receipt;
 }
 
 // Debugging entry point
+try{
 console.log("Starting shopping cart calculation...");
 const total = calculateTotal(cart);
 console.log(total);
@@ -34,5 +44,12 @@ console.log(discountedTotal);
 const receipt = generateReceipt(cart, discountedTotal);
 console.log(receipt);
 
-document.getElementById("total").textContent = `Total: ${discountedTotal}`;
+document.getElementById("total").textContent = `Total: $${discountedTotal.toFixed(2)}`;
 document.getElementById("receipt").textContent = receipt;
+}
+catch(error){
+
+  console.error("An error has occurred:", error.message);
+  document.getElementById("total").textContent= `error message: ${error.message} `;
+  document.getElementById("receipt").textContent= "";
+}
